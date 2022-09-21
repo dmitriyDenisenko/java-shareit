@@ -29,17 +29,17 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public ItemDto saveItem(ItemDto itemDto, int sharedUserId) {
-        itemDto.setId(getId());
         User user = userRepository.getUserById(sharedUserId);
+        itemDto.setId(getId());
         items.add(mapper.toItem(itemDto, user));
         return itemDto;
     }
 
     @Override
     public ItemDto updateItem(ItemDto itemDto, int id, int sharedUserId) {
-        Item item = mapper.toItem(getItemById(id), userRepository.getUserById(sharedUserId));
-        if (item.getId() == id) {
-            if (userRepository.getUserById(sharedUserId).equals(item.getOwner())) {
+        Item oldItem = getItemById(id);
+        if (oldItem.getOwner().getId() == sharedUserId) {
+                Item item = mapper.toItem(getItemDtoById(id), userRepository.getUserById(sharedUserId));
                 itemDto.setId(id);
                 Item updateItem = mapper.toItem(itemDto, userRepository.getUserById(sharedUserId));
                 if (updateItem.getName() == null) {
@@ -48,7 +48,7 @@ public class ItemRepositoryImpl implements ItemRepository {
                 if (updateItem.getDescription() == null) {
                     updateItem.setDescription(item.getDescription());
                 }
-                if (updateItem.getAvailable() == null) {
+                if(updateItem.getAvailable() == null){
                     updateItem.setAvailable(item.getAvailable());
                 }
                 items.remove(item);
@@ -56,12 +56,10 @@ public class ItemRepositoryImpl implements ItemRepository {
                 return mapper.toItemDto(updateItem);
             }
             throw new UserNotExistsError();
-        }
-        throw new ItemNotFoundError();
     }
 
     @Override
-    public ItemDto getItemById(int id) {
+    public ItemDto getItemDtoById(int id) {
         for (Item item : items) {
             if (item.getId() == id) {
                 return mapper.toItemDto(item);
@@ -88,7 +86,7 @@ public class ItemRepositoryImpl implements ItemRepository {
             return searchItems;
         }
         for (Item item : items) {
-            if (item.getAvailable().equals("true")) {
+            if (item.getAvailable()) {
                 if (item.getName().toLowerCase(Locale.ROOT).contains(text.toLowerCase())) {
                     searchItems.add(mapper.toItemDto(item));
                 } else if (item.getDescription().toLowerCase(Locale.ROOT).contains(text.toLowerCase())) {
@@ -102,5 +100,14 @@ public class ItemRepositoryImpl implements ItemRepository {
     private int getId() {
         id++;
         return id - 1;
+    }
+
+    private Item getItemById(int id) {
+        for (Item item : items) {
+            if (item.getId() == id) {
+                return item;
+            }
+        }
+        throw new ItemNotFoundError();
     }
 }

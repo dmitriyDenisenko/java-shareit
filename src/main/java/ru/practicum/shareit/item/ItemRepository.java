@@ -9,7 +9,7 @@ public interface ItemRepository {
 
     ItemDto updateItem(ItemDto itemDto, int itemId, int sharedUserId);
 
-    ItemDto getItemById(int id);
+    ItemDto getItemDtoById(int id);
 
     List<ItemDto> getAllItemsForUser(int userId);
 

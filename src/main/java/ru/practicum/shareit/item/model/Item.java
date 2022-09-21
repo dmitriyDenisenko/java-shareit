@@ -11,10 +11,10 @@ public class Item {
     private int id;
     private String name;
     private String description;
-    private String available;
+    private Boolean available;
     private User owner;
 
-    public Item(int id, String name, String description, String available, User owner) {
+    public Item(int id, String name, String description, Boolean available, User owner) {
         this.id = id;
         this.name = name;
         this.description = description;

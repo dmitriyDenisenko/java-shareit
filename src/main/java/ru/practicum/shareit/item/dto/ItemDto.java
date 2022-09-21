@@ -16,10 +16,9 @@ public class ItemDto {
     @NotNull
     private String description;
     @NotNull
-    @Pattern(regexp = "^true$|^false$", message = "allowed input: true or false")
-    private String available;
+    private Boolean available;
 
-    public ItemDto(int id, String name, String description, String available) {
+    public ItemDto(int id, String name, String description, Boolean available) {
         this.id = id;
         this.name = name;
         this.description = description;

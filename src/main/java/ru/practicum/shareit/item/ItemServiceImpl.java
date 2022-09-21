@@ -27,7 +27,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItemById(int id) {
-        return itemRepository.getItemById(id);
+        return itemRepository.getItemDtoById(id);
     }
 
     @Override
