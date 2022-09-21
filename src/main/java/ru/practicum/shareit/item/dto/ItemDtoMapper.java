@@ -15,7 +15,7 @@ public class ItemDtoMapper {
         );
     }
 
-    public Item toItem(ItemDto itemDto, User user){
+    public Item toItem(ItemDto itemDto, User user) {
         return new Item(
                 itemDto.getId(),
                 itemDto.getName(),

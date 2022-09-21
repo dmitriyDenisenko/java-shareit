@@ -7,11 +7,11 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import java.util.List;
 
 @Service
-public class ItemServiceImpl implements ItemService{
+public class ItemServiceImpl implements ItemService {
     ItemRepository itemRepository;
 
     @Autowired
-    public ItemServiceImpl(ItemRepositoryImpl itemRepository){
+    public ItemServiceImpl(ItemRepositoryImpl itemRepository) {
         this.itemRepository = itemRepository;
     }
 

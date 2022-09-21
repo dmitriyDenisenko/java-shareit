@@ -3,7 +3,6 @@ package ru.practicum.shareit.user;
 import lombok.Data;
 
 import javax.validation.constraints.*;
-import java.time.LocalDate;
 
 /**
  * TODO Sprint add-controllers.

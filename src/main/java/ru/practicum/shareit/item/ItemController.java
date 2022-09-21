@@ -1,9 +1,7 @@
 package ru.practicum.shareit.item;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -26,17 +24,17 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable int itemId){
+    public ItemDto getItemById(@PathVariable int itemId) {
         return itemService.getItemById(itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsUser(@RequestHeader(value = "X-Sharer-User-Id") int sharedUserId){
+    public List<ItemDto> getAllItemsUser(@RequestHeader(value = "X-Sharer-User-Id") int sharedUserId) {
         return itemService.getAllItemsForUser(sharedUserId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItemByText(@RequestParam("text") String text){
+    public List<ItemDto> searchItemByText(@RequestParam("text") String text) {
         return itemService.searchItemByText(text);
     }
 

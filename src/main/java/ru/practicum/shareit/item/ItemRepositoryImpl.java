@@ -22,7 +22,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     private ItemDtoMapper mapper;
 
     @Autowired
-    public ItemRepositoryImpl(ItemDtoMapper mapper, UserRepositoryImpl userRepository){
+    public ItemRepositoryImpl(ItemDtoMapper mapper, UserRepositoryImpl userRepository) {
         this.mapper = mapper;
         this.userRepository = userRepository;
     }
@@ -38,17 +38,17 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public ItemDto updateItem(ItemDto itemDto, int id, int sharedUserId) {
         Item item = mapper.toItem(getItemById(id), userRepository.getUserById(sharedUserId));
-        if(item.getId() == id){
-            if(userRepository.getUserById(sharedUserId).equals(item.getOwner())){
+        if (item.getId() == id) {
+            if (userRepository.getUserById(sharedUserId).equals(item.getOwner())) {
                 itemDto.setId(id);
                 Item updateItem = mapper.toItem(itemDto, userRepository.getUserById(sharedUserId));
-                if(updateItem.getName() == null){
+                if (updateItem.getName() == null) {
                     updateItem.setName(item.getName());
                 }
-                if(updateItem.getDescription() == null){
+                if (updateItem.getDescription() == null) {
                     updateItem.setDescription(item.getDescription());
                 }
-                if(updateItem.getAvailable() == null){
+                if (updateItem.getAvailable() == null) {
                     updateItem.setAvailable(item.getAvailable());
                 }
                 items.remove(item);
@@ -62,8 +62,8 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public ItemDto getItemById(int id) {
-        for(Item item: items){
-            if(item.getId() == id){
+        for (Item item : items) {
+            if (item.getId() == id) {
                 return mapper.toItemDto(item);
             }
         }
@@ -73,8 +73,8 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public List<ItemDto> getAllItemsForUser(int userId) {
         List<ItemDto> userItems = new ArrayList<>();
-        for(Item item: items){
-            if(item.getOwner().getId() == userId){
+        for (Item item : items) {
+            if (item.getOwner().getId() == userId) {
                 userItems.add(mapper.toItemDto(item));
             }
         }
@@ -84,14 +84,14 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public List<ItemDto> searchItemByText(String text) {
         List<ItemDto> searchItems = new ArrayList<>();
-        if(text.isBlank()){
+        if (text.isBlank()) {
             return searchItems;
         }
-        for(Item item: items){
-            if(item.getAvailable().equals("true")){
-                if(item.getName().toLowerCase(Locale.ROOT).contains(text.toLowerCase())){
+        for (Item item : items) {
+            if (item.getAvailable().equals("true")) {
+                if (item.getName().toLowerCase(Locale.ROOT).contains(text.toLowerCase())) {
                     searchItems.add(mapper.toItemDto(item));
-                } else if(item.getDescription().toLowerCase(Locale.ROOT).contains(text.toLowerCase())){
+                } else if (item.getDescription().toLowerCase(Locale.ROOT).contains(text.toLowerCase())) {
                     searchItems.add(mapper.toItemDto(item));
                 }
             }
