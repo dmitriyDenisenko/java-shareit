@@ -39,23 +39,23 @@ public class ItemRepositoryImpl implements ItemRepository {
     public ItemDto updateItem(ItemDto itemDto, int id, int sharedUserId) {
         Item oldItem = getItemById(id);
         if (oldItem.getOwner().getId() == sharedUserId) {
-                Item item = mapper.toItem(getItemDtoById(id), userRepository.getUserById(sharedUserId));
-                itemDto.setId(id);
-                Item updateItem = mapper.toItem(itemDto, userRepository.getUserById(sharedUserId));
-                if (updateItem.getName() == null) {
-                    updateItem.setName(item.getName());
-                }
-                if (updateItem.getDescription() == null) {
-                    updateItem.setDescription(item.getDescription());
-                }
-                if(updateItem.getAvailable() == null){
-                    updateItem.setAvailable(item.getAvailable());
-                }
-                items.remove(item);
-                items.add(updateItem);
-                return mapper.toItemDto(updateItem);
+            Item item = mapper.toItem(getItemDtoById(id), userRepository.getUserById(sharedUserId));
+            itemDto.setId(id);
+            Item updateItem = mapper.toItem(itemDto, userRepository.getUserById(sharedUserId));
+            if (updateItem.getName() == null) {
+                updateItem.setName(item.getName());
             }
-            throw new UserNotExistsError();
+            if (updateItem.getDescription() == null) {
+                updateItem.setDescription(item.getDescription());
+            }
+            if (updateItem.getAvailable() == null) {
+                updateItem.setAvailable(item.getAvailable());
+            }
+            items.remove(item);
+            items.add(updateItem);
+            return mapper.toItemDto(updateItem);
+        }
+        throw new UserNotExistsError();
     }
 
     @Override
