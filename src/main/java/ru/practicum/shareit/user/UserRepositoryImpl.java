@@ -1,12 +1,13 @@
 package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Repository
 public class UserRepositoryImpl implements UserRepository {
     List<User> users = new ArrayList<>();
     int id = 1;
