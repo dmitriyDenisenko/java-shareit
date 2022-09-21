@@ -10,13 +10,10 @@ import ru.practicum.shareit.user.UserNotExistsError;
 import java.util.List;
 import java.util.Map;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    ItemService itemService;
+    private ItemService itemService;
 
     @Autowired
     public ItemController(ItemServiceImpl itemService) {

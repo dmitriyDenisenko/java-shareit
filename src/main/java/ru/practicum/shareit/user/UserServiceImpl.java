@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     public UserServiceImpl(UserRepositoryImpl userRepository) {

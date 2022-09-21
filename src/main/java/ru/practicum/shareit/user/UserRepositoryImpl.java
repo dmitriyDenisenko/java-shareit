@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-    List<User> users = new ArrayList<>();
-    int id = 1;
+    private List<User> users = new ArrayList<>();
+    private int id = 0;
 
     @Override
     public List<User> getAllUsers() {
@@ -63,7 +63,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     private long getId() {
         id++;
-        return id - 1;
+        return id;
     }
 
     private boolean isUniqueEmail(User user) {

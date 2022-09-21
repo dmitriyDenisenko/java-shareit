@@ -1,20 +1,15 @@
 package ru.practicum.shareit.user;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
-@Slf4j
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
-    UserService userService;
+    private UserService userService;
 
     @Autowired
     public UserController(UserServiceImpl userService) {
