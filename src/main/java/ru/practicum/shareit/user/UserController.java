@@ -54,6 +54,7 @@ public class UserController {
     public Map<String, Integer> handleValidation(final ConstraintViolationException e) {
         return Map.of("Validation error: ", 404);
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, Integer> handleFinder(final UserNotExistsError e) {
