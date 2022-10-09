@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.UserNotExistsError;
+import ru.practicum.shareit.user.exception.UserNotExistsError;
 
 import java.util.List;
 import java.util.Map;

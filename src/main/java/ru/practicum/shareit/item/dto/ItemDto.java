@@ -6,7 +6,7 @@ import javax.validation.constraints.*;
 
 @Data
 public class ItemDto {
-    private int id;
+    private Integer id;
     @NotBlank
     private String name;
     @NotBlank

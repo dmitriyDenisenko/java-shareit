@@ -1,42 +1,54 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoMapper;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.exception.UserNotExistsError;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ItemServiceImpl implements ItemService {
     private ItemRepository itemRepository;
+    private UserRepository userRepository;
 
-    @Autowired
-    public ItemServiceImpl(ItemRepositoryImpl itemRepository) {
-        this.itemRepository = itemRepository;
-    }
 
     @Override
     public ItemDto saveItem(ItemDto itemDto, int id) {
-        return itemRepository.saveItem(itemDto, id);
+        Optional<User> user = userRepository.findById(Long.valueOf(id));
+        if(user.isPresent()){
+            Item item = ItemDtoMapper.mapToItem(itemDto,user.get());
+            itemRepository.save(item);
+        }
+        throw new UserNotExistsError();
     }
 
     @Override
     public ItemDto updateItem(ItemDto itemDto, int itemId, int sharedUserId) {
-        return itemRepository.updateItem(itemDto, itemId, sharedUserId);
+        return null;
     }
 
     @Override
     public ItemDto getItemById(int id) {
-        return itemRepository.getItemDtoById(id);
+        Optional<Item> item = itemRepository.findById(Long.valueOf(id));
+        if(item.isPresent()){
+            return ItemDtoMapper.mapToItemDto(item.get());
+        }
+        throw new ItemNotFoundError();
+
     }
 
     @Override
     public List<ItemDto> getAllItemsForUser(int userId) {
-        return itemRepository.getAllItemsForUser(userId);
+        return null;
     }
 
     @Override
     public List<ItemDto> searchItemByText(String text) {
-        return itemRepository.searchItemByText(text);
+        return null;
     }
 }
