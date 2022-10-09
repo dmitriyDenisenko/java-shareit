@@ -5,6 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.exception.ItemNotFoundException;
+import ru.practicum.shareit.item.exception.ItemsDifficileUsersException;
+import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.user.exception.UserNotExistsError;
 
 import java.util.List;
@@ -21,12 +25,12 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable int itemId) {
+    public ItemDto getItemById(@PathVariable Long itemId) {
         return itemService.getItemById(itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsUser(@RequestHeader(value = "X-Sharer-User-Id") int sharedUserId) {
+    public List<ItemDto> getAllItemsUser(@RequestHeader(value = "X-Sharer-User-Id") Long sharedUserId) {
         return itemService.getAllItemsForUser(sharedUserId);
     }
 
@@ -37,7 +41,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(
-            @RequestHeader(value = "X-Sharer-User-Id") int sharedUserId,
+            @RequestHeader(value = "X-Sharer-User-Id") Long sharedUserId,
             @Validated @RequestBody ItemDto itemDto) {
         return itemService.saveItem(itemDto, sharedUserId);
 
@@ -45,9 +49,9 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(
-            @RequestHeader(value = "X-Sharer-User-Id") int sharedUserId,
+            @RequestHeader(value = "X-Sharer-User-Id") Long sharedUserId,
             @RequestBody ItemDto itemDto,
-            @PathVariable int itemId) {
+            @PathVariable Long itemId) {
         return itemService.updateItem(itemDto, itemId, sharedUserId);
     }
 
@@ -55,5 +59,17 @@ public class ItemController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, Integer> handleUserNotFind(final UserNotExistsError e) {
         return Map.of("User error", 404);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, Integer> handleItemUsers(final ItemsDifficileUsersException e) {
+        return Map.of("Item user difficult", 404);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, Integer> handleItem(final ItemNotFoundException e) {
+        return Map.of("Item not found", 404);
     }
 }
