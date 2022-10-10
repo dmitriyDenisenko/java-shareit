@@ -11,12 +11,13 @@ import java.util.List;
 @Component
 public class ItemDtoMapper {
     public static ItemDto mapToItemDto(Item item) {
-        return new ItemDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable()
-        );
+        return ItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .request(item.getRequest())
+                .build();
     }
 
     public static List<ItemDto> mapToItemDto(List<Item> items) {
@@ -28,12 +29,12 @@ public class ItemDtoMapper {
     }
 
     public static Item mapToItem(ItemDto itemDto, User user) {
-        return new Item(
-                itemDto.getId(),
-                itemDto.getName(),
-                itemDto.getDescription(),
-                itemDto.getAvailable(),
-                user.getId()
-        );
+        return Item.builder()
+                .id(itemDto.getId())
+                .name(itemDto.getName())
+                .description(itemDto.getDescription())
+                .available(itemDto.getAvailable())
+                .request(itemDto.getRequest())
+                .build();
     }
 }

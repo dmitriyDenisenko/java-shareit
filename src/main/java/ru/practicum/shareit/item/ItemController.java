@@ -4,13 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemsDifficileUsersException;
+import ru.practicum.shareit.item.exception.UserIsNotOwnerException;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.user.exception.UserNotExistsException;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +29,9 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable Long itemId) {
-        return itemService.getItemById(itemId);
+    ItemDto getItemById(@NotBlank @RequestHeader("X-Sharer-User-Id") long userId,
+                        @PathVariable long itemId) {
+        return itemService.getItemById(userId, itemId);
     }
 
     @GetMapping
@@ -55,21 +60,24 @@ public class ItemController {
         return itemService.updateItem(itemDto, itemId, sharedUserId);
     }
 
-    @ExceptionHandler
+    @PostMapping("/{itemId}/comment")
+    CommentDto createComment(@NotBlank @RequestHeader("X-Sharer-User-Id") long userId,
+                             @PathVariable long itemId,
+                             @RequestBody @Valid CommentDto commentDto) {
+        return itemService.postComment(userId, itemId, commentDto);
+    }
+
+    @ExceptionHandler(value = {UserNotExistsException.class, ItemsDifficileUsersException.class,
+            ItemNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Integer> handleUserNotFind(final UserNotExistsException e) {
-        return Map.of("User error", 404);
+    public Map<String, Integer> handleItemsProblems(final RuntimeException e) {
+        return Map.of(e.getMessage(), 404);
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Integer> handleItemUsers(final ItemsDifficileUsersException e) {
-        return Map.of("Item user difficult", 404);
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Integer> handleCommentPost(final UserIsNotOwnerException e) {
+        return Map.of(e.getMessage(), 400);
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Integer> handleItem(final ItemNotFoundException e) {
-        return Map.of("Item not found", 404);
-    }
 }
