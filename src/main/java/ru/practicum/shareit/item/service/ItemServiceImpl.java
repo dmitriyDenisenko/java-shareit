@@ -22,10 +22,7 @@ import ru.practicum.shareit.user.exception.UserNotExistsException;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -125,7 +122,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         List<BookingForItem> bookings = bookingRepository.findAllByItem(item);
         BookingForItem booking = bookings.stream()
-                .filter(bookingForItem -> bookingForItem.getBooker().getId() == userId)
+                .filter(bookingForItem -> Objects.equals(bookingForItem.getBooker().getId(), userId))
                 .findAny()
                 .orElseThrow(() -> new UserIsNotOwnerException("user not booking this item"));
         if (booking.getEnd().isAfter(LocalDateTime.now())) {
