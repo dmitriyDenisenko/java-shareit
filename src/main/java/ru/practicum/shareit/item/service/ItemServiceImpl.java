@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.ItemDtoMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
@@ -9,13 +10,14 @@ import ru.practicum.shareit.item.exception.ItemsDifficileUsersException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.exception.UserNotExistsError;
+import ru.practicum.shareit.user.exception.UserNotExistsException;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 @Service
 public class ItemServiceImpl implements ItemService {
     private ItemRepository itemRepository;
@@ -28,6 +30,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
 
+    @Transactional
     @Override
     public ItemDto saveItem(ItemDto itemDto, Long id) {
         Optional<User> user = userRepository.findById(Long.valueOf(id));
@@ -35,9 +38,10 @@ public class ItemServiceImpl implements ItemService {
             Item item = ItemDtoMapper.mapToItem(itemDto, user.get());
             return ItemDtoMapper.mapToItemDto(itemRepository.save(item));
         }
-        throw new UserNotExistsError();
+        throw new UserNotExistsException();
     }
 
+    @Transactional
     @Override
     public ItemDto updateItem(ItemDto itemDto, Long itemId, Long sharedUserId) {
         Optional<Item> itemOp = itemRepository.findById(itemId);

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.exception.UserNotExistsError;
+import ru.practicum.shareit.user.exception.UserNotExistsException;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
@@ -57,7 +57,7 @@ public class UserController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Integer> handleFinder(final UserNotExistsError e) {
+    public Map<String, Integer> handleFinder(final UserNotExistsException e) {
         return Map.of("Validation error: ", 404);
     }
 }

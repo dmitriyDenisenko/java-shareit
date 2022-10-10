@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.UserDtoMapper;
-import ru.practicum.shareit.user.exception.UserNotExistsError;
+import ru.practicum.shareit.user.exception.UserNotExistsException;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto updateUser(UserDto user, Long userId) {
-        User oldUser = userRepository.findById(userId).orElseThrow(UserNotExistsError::new);
+        User oldUser = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
         User updUser = UserDtoMapper.mapToUser(user);
         if (updUser.getName() != null) {
             oldUser.setName(updUser.getName());
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()) {
             return UserDtoMapper.mapToUserDto(user.get());
         }
-        throw new UserNotExistsError();
+        throw new UserNotExistsException();
 
     }
 

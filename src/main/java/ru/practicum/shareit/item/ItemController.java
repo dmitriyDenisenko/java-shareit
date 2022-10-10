@@ -9,7 +9,7 @@ import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemsDifficileUsersException;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
-import ru.practicum.shareit.user.exception.UserNotExistsError;
+import ru.practicum.shareit.user.exception.UserNotExistsException;
 
 import java.util.List;
 import java.util.Map;
@@ -57,7 +57,7 @@ public class ItemController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Integer> handleUserNotFind(final UserNotExistsError e) {
+    public Map<String, Integer> handleUserNotFind(final UserNotExistsException e) {
         return Map.of("User error", 404);
     }
 
