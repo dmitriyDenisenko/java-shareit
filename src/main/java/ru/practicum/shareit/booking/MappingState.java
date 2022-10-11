@@ -6,7 +6,7 @@ import ru.practicum.shareit.booking.model.State;
 
 @UtilityClass
 public class MappingState {
-    public static State validateStatus(String text) {
+    public static State mapStatus(String text) {
         State stateEnum;
         try {
             stateEnum = State.valueOf(text.toUpperCase());
