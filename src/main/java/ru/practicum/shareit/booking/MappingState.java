@@ -5,7 +5,7 @@ import ru.practicum.shareit.booking.exception.BookingDtoBadStateException;
 import ru.practicum.shareit.booking.model.State;
 
 @UtilityClass
-public class ValidateState {
+public class MappingState {
     public static State validateStatus(String text) {
         State stateEnum;
         try {
