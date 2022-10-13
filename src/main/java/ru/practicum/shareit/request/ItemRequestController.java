@@ -36,19 +36,19 @@ public class ItemRequestController {
     List<ItemRequestDto> getAll(@NotBlank @RequestHeader("X-Sharer-User-Id") Long sharerUserId,
                                 @RequestParam(defaultValue = "1") Integer from,
                                 @RequestParam(defaultValue = "10") Integer size) {
-        log.info("Get requests all. User_id {}, From: {}, Size: {}",sharerUserId, from, size);
+        log.info("Get requests all. User_id {}, From: {}, Size: {}", sharerUserId, from, size);
         return itemRequestService.getAll(sharerUserId, from, size);
     }
 
     @GetMapping
-    List<ItemRequestDto> getByRequester(@NotBlank @RequestHeader("X-Sharer-User-Id") Long sharerUserId){
+    List<ItemRequestDto> getByRequester(@NotBlank @RequestHeader("X-Sharer-User-Id") Long sharerUserId) {
         log.info("Get requests by User: {}", sharerUserId);
         return itemRequestService.getByRequester(sharerUserId);
     }
 
     @GetMapping("/{requestId}")
     ItemRequestDto getById(@NotBlank @RequestHeader("X-Sharer-User-Id") Long sharerUserId,
-                           @PathVariable Long requestId){
+                           @PathVariable Long requestId) {
         log.info("Get request by id: {}", requestId);
         return itemRequestService.getById(sharerUserId, requestId);
     }

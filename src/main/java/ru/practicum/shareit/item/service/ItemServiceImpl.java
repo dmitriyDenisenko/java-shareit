@@ -59,7 +59,7 @@ public class ItemServiceImpl implements ItemService {
             throw new UserNotExistsException();
         }
         Item item = ItemDtoMapper.mapToItem(itemDto, user.get());
-        if(itemDto.getRequestId() != null){
+        if (itemDto.getRequestId() != null) {
             ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
                     .orElseThrow(ItemRequestNotFoundException::new);
             item.setRequestId(itemRequest.getId());
@@ -110,7 +110,7 @@ public class ItemServiceImpl implements ItemService {
             throw new BadParametersException("Error! Your parameter from < 0");
         }
         User owner = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
-        return itemRepository.findByOwner(owner.getId(),  PageRequest.of(from / size, size))
+        return itemRepository.findByOwner(owner.getId(), PageRequest.of(from / size, size))
                 .stream()
                 .sorted(Comparator.comparing(Item::getId))
                 .map(item -> setLastAndNextBookingDate(item, ItemDtoMapper.mapToItemDto(item)))
@@ -126,7 +126,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.equals("")) {
             return new ArrayList<>();
         }
-        return itemRepository.search(text,  PageRequest.of(from / size, size))
+        return itemRepository.search(text, PageRequest.of(from / size, size))
                 .stream()
                 .map(ItemDtoMapper::mapToItemDto)
                 .collect(Collectors.toList());
