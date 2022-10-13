@@ -39,16 +39,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto updateUser(UserDto user, Long userId) {
-        User oldUser = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
-        User updUser = UserDtoMapper.mapToUser(user);
-        if (updUser.getName() != null) {
-            oldUser.setName(updUser.getName());
+    public UserDto updateUser(UserDto userDto, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotExistsException::new);
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
         }
-        if (updUser.getEmail() != null) {
-            oldUser.setEmail(updUser.getEmail());
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
         }
-        return UserDtoMapper.mapToUserDto(userRepository.save(oldUser));
+        return UserDtoMapper.mapToUserDto(userRepository.save(user));
     }
 
     @Override
@@ -64,6 +64,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void removeUser(Long id) {
-        userRepository.deleteById(id);
+        userRepository.delete(userRepository.findById(id)
+                .orElseThrow(UserNotExistsException::new));
     }
 }

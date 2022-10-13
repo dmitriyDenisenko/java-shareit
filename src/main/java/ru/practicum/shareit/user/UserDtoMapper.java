@@ -1,7 +1,8 @@
 package ru.practicum.shareit.user;
 
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.exception.NullEmailException;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +27,11 @@ public class UserDtoMapper {
     }
 
     public static User mapToUser(UserDto user) {
-        return new User(
-                user.getId(),
+        if (user.getEmail() == null) {
+            throw new NullEmailException("Email can`t be null");
+        }
+        return new User(user.getId(),
                 user.getName(),
-                user.getEmail()
-        );
+                user.getEmail());
     }
 }

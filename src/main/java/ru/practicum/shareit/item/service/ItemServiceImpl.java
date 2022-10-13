@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
@@ -17,8 +18,12 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.request.exception.BadParametersException;
+import ru.practicum.shareit.request.exception.ItemRequestNotFoundException;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.exception.UserNotExistsException;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -32,14 +37,17 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Autowired
     public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository,
-                           BookingRepository bookingRepository, CommentRepository commentRepository) {
+                           BookingRepository bookingRepository, CommentRepository commentRepository,
+                           ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
 
@@ -51,6 +59,11 @@ public class ItemServiceImpl implements ItemService {
             throw new UserNotExistsException();
         }
         Item item = ItemDtoMapper.mapToItem(itemDto, user.get());
+        if(itemDto.getRequestId() != null){
+            ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(ItemRequestNotFoundException::new);
+            item.setRequestId(itemRequest.getId());
+        }
         item.setOwner(userRepository.findById(id).orElseThrow(UserNotExistsException::new).getId());
         return ItemDtoMapper.mapToItemDto(itemRepository.save(item));
 
@@ -76,9 +89,6 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
-        if (itemDto.getRequest() != null) {
-            item.setRequest(itemDto.getRequest());
-        }
         return ItemDtoMapper.mapToItemDto(itemRepository.save(item));
     }
 
@@ -95,9 +105,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAllItemsForUser(Long userId) {
+    public List<ItemDto> getAllItemsForUser(Integer from, Integer size, Long userId) {
+        if (from < 0) {
+            throw new BadParametersException("Error! Your parameter from < 0");
+        }
         User owner = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
-        return itemRepository.findByOwner(userId)
+        return itemRepository.findByOwner(owner.getId(),  PageRequest.of(from / size, size))
                 .stream()
                 .sorted(Comparator.comparing(Item::getId))
                 .map(item -> setLastAndNextBookingDate(item, ItemDtoMapper.mapToItemDto(item)))
@@ -106,11 +119,17 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItemByText(String text) {
-        if (!text.isBlank()) {
-            return ItemDtoMapper.mapToItemDto(itemRepository.search(text));
+    public List<ItemDto> searchItemByText(Integer from, Integer size, String text) {
+        if (from < 0) {
+            throw new BadParametersException("Error! Parameter 'From' < 0 ");
         }
-        return new ArrayList<>();
+        if (text.equals("")) {
+            return new ArrayList<>();
+        }
+        return itemRepository.search(text,  PageRequest.of(from / size, size))
+                .stream()
+                .map(ItemDtoMapper::mapToItemDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -120,18 +139,20 @@ public class ItemServiceImpl implements ItemService {
         if (comment.getText().isEmpty()) {
             throw new UserIsNotOwnerException("text is empty");
         }
+        comment.setAuthor(userRepository.findById(userId)
+                .orElseThrow(UserNotExistsException::new));
         Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         List<BookingForItem> bookings = bookingRepository.findAllByItem(item);
         BookingForItem booking = bookings.stream()
                 .filter(bookingForItem -> Objects.equals(bookingForItem.getBooker().getId(), userId))
                 .findAny()
                 .orElseThrow(() -> new UserIsNotOwnerException("user not booking this item"));
+        LocalDateTime time = booking.getEnd();
         if (booking.getEnd().isAfter(LocalDateTime.now())) {
             throw new UserIsNotOwnerException("user do not end booking;");
         }
         comment.setItem(item.getId());
-        comment.setAuthor(userRepository.findById(userId)
-                .orElseThrow(UserNotExistsException::new));
+
         return CommentDtoMapper.toCommentDto(commentRepository.save(comment));
     }
 

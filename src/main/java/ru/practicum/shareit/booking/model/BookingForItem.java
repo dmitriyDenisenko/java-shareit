@@ -6,7 +6,7 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 
 public interface BookingForItem {
-    long getId();
+    Long getId();
 
     LocalDateTime getStart();
 

@@ -4,22 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemRequestDto {
+public class RequestDto {
     private Long id;
-
-    private List<ItemDto> items;
 
     @NotEmpty
     private String description;
 
-    private String created;
+    private Long requesterId;
+
+    private LocalDateTime created;
 }

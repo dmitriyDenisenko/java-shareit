@@ -29,19 +29,23 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    ItemDto getItemById(@NotBlank @RequestHeader("X-Sharer-User-Id") long userId,
-                        @PathVariable long itemId) {
+    ItemDto getItemById(@NotBlank @RequestHeader("X-Sharer-User-Id") Long userId,
+                        @PathVariable Long itemId) {
         return itemService.getItemById(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsUser(@RequestHeader(value = "X-Sharer-User-Id") Long sharedUserId) {
-        return itemService.getAllItemsForUser(sharedUserId);
+    public List<ItemDto> getAllItemsUser(@RequestHeader(value = "X-Sharer-User-Id") Long sharedUserId,
+                                         @RequestParam(defaultValue = "1") Integer from,
+                                         @RequestParam(defaultValue = "10") Integer size) {
+        return itemService.getAllItemsForUser(from, size, sharedUserId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItemByText(@RequestParam("text") String text) {
-        return itemService.searchItemByText(text);
+    public List<ItemDto> searchItemByText(@RequestParam(value = "text", required = false) String text,
+                                          @RequestParam(defaultValue = "1") Integer from,
+                                          @RequestParam(defaultValue = "10") Integer size) {
+        return itemService.searchItemByText(from, size, text);
     }
 
     @PostMapping
@@ -61,8 +65,8 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    CommentDto createComment(@NotBlank @RequestHeader("X-Sharer-User-Id") long userId,
-                             @PathVariable long itemId,
+    CommentDto createComment(@NotBlank @RequestHeader("X-Sharer-User-Id") Long userId,
+                             @PathVariable Long itemId,
                              @RequestBody @Valid CommentDto commentDto) {
         return itemService.postComment(userId, itemId, commentDto);
     }

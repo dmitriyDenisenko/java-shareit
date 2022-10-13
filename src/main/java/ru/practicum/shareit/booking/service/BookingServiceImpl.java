@@ -1,5 +1,8 @@
 package ru.practicum.shareit.booking.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
@@ -18,6 +21,7 @@ import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.UserIsNotOwnerException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.exception.BadParametersException;
 import ru.practicum.shareit.user.exception.UserNotExistsException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -33,6 +37,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
+    @Autowired
     public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository,
                               ItemRepository itemRepository) {
         this.bookingRepository = bookingRepository;
@@ -42,7 +47,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDtoUser create(long userId, long itemId, BookingDto bookingDto) {
+    public BookingDtoUser create(Long userId, Long itemId, BookingDto bookingDto) {
         Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
         if (!(item.getAvailable())) {
             throw new ItemNotAvailableException("item not availible");
@@ -63,7 +68,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDtoUser approveStatus(long userId, long bookingId, boolean approved) {
+    public BookingDtoUser approveStatus(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("booking not found"));
         if (!(booking.getStatus().equals(Status.WAITING))) {
@@ -81,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDtoUser getBookingById(long userId, long bookingId) {
+    public BookingDtoUser getBookingById(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("booking not found"));
         if (userId != booking.getItem().getOwner() && userId != booking.getBooker().getId()) {
@@ -91,9 +96,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoState> getBookingCurrentUser(long userId, State stateEnum) {
+    public List<BookingDtoState> getBookingCurrentUser(Long userId, State stateEnum, Integer from, Integer size) {
+        if (from < 0) {
+            throw new BadParametersException("Error. From < 0");
+        }
         User booker = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
-        return bookingRepository.findAllByBooker(booker)
+        return bookingRepository.findAllByBooker(booker, PageRequest.of(from / size, size,
+                        Sort.by(Sort.Direction.DESC, "start")))
                 .stream()
                 .map(BookingMapper::toBookingDtoState)
                 .filter(bookingDtoState -> bookingDtoState.getStates().contains(stateEnum))
@@ -102,15 +111,17 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoState> getBookingCurrentOwner(long userId, State stateEnum) {
+    public List<BookingDtoState> getBookingCurrentOwner(Long userId, State stateEnum, Integer from, Integer size) {
+        if (from < 0) {
+            throw new BadParametersException("Error. From < 0");
+        }
         User owner = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
-        List<Booking> bookings = bookingRepository.findAllByItemOwner(userId);
-        List<BookingDtoState> bookingDtoStates = bookings
+        return bookingRepository.findAllByItemOwner(owner.getId(), PageRequest.of(from / size, size,
+                        Sort.by(Sort.Direction.DESC, "start")))
                 .stream()
                 .map(BookingMapper::toBookingDtoState)
                 .filter(bookingDtoState -> bookingDtoState.getStates().contains(stateEnum))
                 .sorted(Comparator.comparing(BookingDtoState::getStart).reversed())
                 .collect(Collectors.toList());
-        return bookingDtoStates;
     }
 }
