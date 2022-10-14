@@ -104,7 +104,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getAllItemsForUser(Integer from, Integer size, Long userId) {
-        ValidatorParameters.validatePageParameters(from,size);
+        ValidatorParameters.validatePageParameters(from, size);
         User owner = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
         log.info("All successful for get all Items for user {}", userId);
         return itemRepository.findByOwner(owner.getId(), PageRequest.of(from / size, size))
@@ -117,7 +117,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> searchItemByText(Integer from, Integer size, String text) {
-        ValidatorParameters.validatePageParameters(from,size);
+        ValidatorParameters.validatePageParameters(from, size);
         if ("".equals(text)) {
             return new ArrayList<>();
         }
@@ -183,21 +183,21 @@ public class ItemServiceImpl implements ItemService {
         return commentRepository.findCommentsByItem(item.getId());
     }
 
-    private void validateUpdateItem(Item item, Long sharedUserId){
+    private void validateUpdateItem(Item item, Long sharedUserId) {
         if (!sharedUserId.equals(item.getOwner())) {
             log.warn("User {} not owner {} for item {}", sharedUserId, item.getOwner(), item.getId());
             throw new ItemsDifficileUsersException();
         }
     }
 
-    private void validateText(String text){
+    private void validateText(String text) {
         if (text.isEmpty()) {
             log.warn("Text in comment is empty");
             throw new UserIsNotOwnerException("text is empty");
         }
     }
 
-    private void validateCloseBooking(BookingForItem booking){
+    private void validateCloseBooking(BookingForItem booking) {
         if (booking.getEnd().isAfter(LocalDateTime.now())) {
             log.warn("Booking end {} is after {}", booking.getEnd(), LocalDateTime.now());
             throw new UserIsNotOwnerException("user do not end booking;");

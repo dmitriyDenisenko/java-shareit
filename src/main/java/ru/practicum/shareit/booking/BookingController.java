@@ -32,7 +32,7 @@ public class BookingController {
     @PostMapping()
     BookingDtoUser create(@NotBlank @RequestHeader("X-Sharer-User-Id") Long userId,
                           @RequestBody @Valid BookingDto bookingDto) {
-        log.info("create booking. User_id: {}; Booking_id: {}",userId,bookingDto.getId());
+        log.info("create booking. User_id: {}; Booking_id: {}", userId, bookingDto.getId());
         return bookingService.create(userId, bookingDto.getItemId(), bookingDto);
     }
 

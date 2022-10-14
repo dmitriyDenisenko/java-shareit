@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class ItemRequestServiceImpl implements ItemRequestService {
@@ -52,6 +54,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDto> getAll(Long sharerUserId, Integer from, Integer size) {
         validatePageParameters(from, size);
         User user = checkAndGenerateUser(sharerUserId);
+        log.info("All successful for getAll");
         return itemRequestRepository.findAllByRequesterIsNot(user.getId(), PageRequest
                         .of(from / size, size, Sort.by(Sort.Direction.DESC, "created")))
                 .stream()
@@ -75,6 +78,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         checkAndGenerateUser(sharerUserId);
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)
                 .orElseThrow(ItemRequestNotFoundException::new);
+        log.info("All successful for get by id {}", requestId);
         return createItemRequestDto(itemRequest);
     }
 

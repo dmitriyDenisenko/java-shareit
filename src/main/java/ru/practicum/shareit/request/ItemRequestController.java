@@ -56,6 +56,7 @@ public class ItemRequestController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, Integer> handleNotFoundItemRequest(final ItemRequestNotFoundException e) {
+        log.warn("The action was not completed successfully");
         return Map.of(e.getMessage(), 404);
     }
 }
