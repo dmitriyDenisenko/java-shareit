@@ -113,6 +113,13 @@
 							<goals>
 								<goal>check</goal>
 							</goals>
+							<configuration>
+								<resources>
+									<resource>
+										<directory>src/test/resources</directory>
+									</resource>
+								</resources>
+							</configuration>
 							<phase>compile</phase>
 						</execution>
 					</executions>
