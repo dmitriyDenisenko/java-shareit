@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,6 +33,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
@@ -50,20 +52,13 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDtoUser create(Long userId, Long itemId, BookingDto bookingDto) {
         Item item = itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new);
-        if (!(item.getAvailable())) {
-            throw new ItemNotAvailableException("item not availible");
-        }
-        if (Objects.equals(item.getOwner(), userId)) {
-            throw new UserIsNotOwnerException("you can not booking this item");
-        }
-        if (bookingDto.getStart().isAfter(bookingDto.getEnd())) {
-            throw new TimeStartAndEndException();
-        }
+        validateCreatingBooking(item, userId, bookingDto);
         Booking booking = BookingMapper.toBooking(bookingDto);
         booking.setItem(item);
         booking.setBooker(userRepository.findById(userId)
                 .orElseThrow(UserNotExistsException::new));
         booking.setStatus(Status.WAITING);
+        log.info("Booking {} has been successfully prepared for saving to the database", booking.getId());
         return BookingMapper.toBookingDtoToUser(bookingRepository.save(booking));
     }
 
@@ -72,17 +67,13 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoUser approveStatus(Long userId, Long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("booking not found"));
-        if (!(booking.getStatus().equals(Status.WAITING))) {
-            throw new BookingNotChangeStatusException("status can not be change");
-        }
-        if (!Objects.equals(userId, booking.getItem().getOwner())) {
-            throw new UserIsNotOwnerException("user not owner this item and can not approve status");
-        }
+        validateApproveStatus(booking, userId);
         if (approved) {
             booking.setStatus(Status.APPROVED);
         } else {
             booking.setStatus(Status.REJECTED);
         }
+        log.info("Booking {} has been successfully approve status", bookingId);
         return BookingMapper.toBookingDtoToUser(bookingRepository.save(booking));
     }
 
@@ -90,17 +81,13 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoUser getBookingById(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("booking not found"));
-        if (!Objects.equals(userId, booking.getItem().getOwner()) && !Objects.equals(userId, booking.getBooker().getId())) {
-            throw new UserIsNotOwnerException("user not owner this item and can not get this booking");
-        }
+        validateGettingBookById(booking, userId);
         return BookingMapper.toBookingDtoToUser(booking);
     }
 
     @Override
     public List<BookingDtoState> getBookingCurrentUser(Long userId, State stateEnum, Integer from, Integer size) {
-        if (from < 0) {
-            throw new BadParametersException("Error. From < 0");
-        }
+        validatePageParameters(from, size);
         User booker = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
         return bookingRepository.findAllByBooker(booker, PageRequest.of(from / size, size,
                         Sort.by(Sort.Direction.DESC, "start")))
@@ -113,9 +100,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoState> getBookingCurrentOwner(Long userId, State stateEnum, Integer from, Integer size) {
-        if (from < 0) {
-            throw new BadParametersException("Error. From < 0");
-        }
+        validatePageParameters(from, size);
         User owner = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
         return bookingRepository.findAllByItemOwner(owner.getId(), PageRequest.of(from / size, size,
                         Sort.by(Sort.Direction.DESC, "start")))
@@ -124,5 +109,50 @@ public class BookingServiceImpl implements BookingService {
                 .filter(bookingDtoState -> bookingDtoState.getStates().contains(stateEnum))
                 .sorted(Comparator.comparing(BookingDtoState::getStart).reversed())
                 .collect(Collectors.toList());
+    }
+
+    private void validateCreatingBooking(Item item, Long userId, BookingDto bookingDto) {
+        if (!(item.getAvailable())) {
+            log.warn("Item (id: {}) have available false", item.getId());
+            throw new ItemNotAvailableException("item not available");
+        }
+        if (Objects.equals(item.getOwner(), userId)) {
+            log.warn("Item (id: {}) have owner:{} , but user {} trying to create a booking",
+                    item.getId(), item.getOwner(), userId);
+            throw new UserIsNotOwnerException("you can not booking this item");
+        }
+        if (bookingDto.getStart().isAfter(bookingDto.getEnd())) {
+            log.warn("Booking start: {}, after booking end: {}",
+                    bookingDto.getStart(), bookingDto.getEnd());
+            throw new TimeStartAndEndException();
+        }
+    }
+
+    private void validateApproveStatus(Booking booking, Long userId) {
+        if (!(booking.getStatus().equals(Status.WAITING))) {
+            log.warn("Status for booking {} can`t be change", booking.getId());
+            throw new BookingNotChangeStatusException("status can not be change");
+        }
+        if (!Objects.equals(userId, booking.getItem().getOwner())) {
+            log.warn("User {} not owner {} of item {}", userId,
+                    booking.getItem().getOwner(), booking.getItem().getId());
+            throw new UserIsNotOwnerException("user not owner this item and can not approve status");
+        }
+    }
+
+    private void validateGettingBookById(Booking booking, Long userId) {
+        if (!Objects.equals(userId, booking.getItem().getOwner()) && !Objects.equals(userId,
+                booking.getBooker().getId())) {
+            log.warn("User {} not owner {} booking {}. Can`t get this book",
+                    userId, booking.getBooker(), booking.getId());
+            throw new UserIsNotOwnerException("user not owner this item and can not get this booking");
+        }
+    }
+
+    private void validatePageParameters(Integer from, Integer size) {
+        if (from < 0 || size == 0) {
+            log.warn("From = {}; Size = {}", from, size);
+            throw new BadParametersException("Error! You giving bad Parameters");
+        }
     }
 }

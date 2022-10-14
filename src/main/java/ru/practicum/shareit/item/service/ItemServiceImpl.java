@@ -123,7 +123,7 @@ public class ItemServiceImpl implements ItemService {
         if (from < 0) {
             throw new BadParametersException("Error! Parameter 'From' < 0 ");
         }
-        if (text.equals("")) {
+        if ("".equals(text)) {
             return new ArrayList<>();
         }
         return itemRepository.search(text, PageRequest.of(from / size, size))

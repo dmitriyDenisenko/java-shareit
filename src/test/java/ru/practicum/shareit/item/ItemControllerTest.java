@@ -23,10 +23,10 @@ import static ru.practicum.shareit.item.ItemTestData.*;
 @WebMvcTest(controllers = ItemController.class)
 public class ItemControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @MockBean
-    ItemServiceImpl itemService;
+    private ItemServiceImpl itemService;
 
     @Autowired
     private MockMvc mvc;

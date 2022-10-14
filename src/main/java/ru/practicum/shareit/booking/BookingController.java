@@ -40,6 +40,7 @@ public class BookingController {
     BookingDtoUser approveStatus(@NotBlank @RequestHeader("X-Sharer-User-Id") Long userId,
                                  @PathVariable Long bookingId,
                                  @RequestParam Boolean approved) {
+        log.info("Approve status for booking {}", bookingId);
         return bookingService.approveStatus(userId, bookingId, approved);
     }
 
@@ -74,12 +75,14 @@ public class BookingController {
             = {BookingDtoBadStateException.class, TimeStartAndEndException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(RuntimeException e) {
+        log.warn("The action was not completed successfully");
         return new ErrorResponse("Unknown state: UNSUPPORTED_STATUS");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFindItemOfBooking(ItemNotFoundException e) {
+        log.warn("The action was not completed successfully");
         return new ErrorResponse(e.getMessage());
     }
 }

@@ -22,10 +22,10 @@ import static ru.practicum.shareit.booking.BookingTestData.*;
 @WebMvcTest(controllers = BookingController.class)
 public class BookingControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @MockBean
-    BookingServiceImpl bookingService;
+    private BookingServiceImpl bookingService;
 
     @Autowired
     private MockMvc mvc;

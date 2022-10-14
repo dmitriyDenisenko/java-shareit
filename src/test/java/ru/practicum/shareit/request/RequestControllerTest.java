@@ -23,10 +23,10 @@ import static ru.practicum.shareit.request.RequestTestData.*;
 @WebMvcTest(controllers = ItemRequestController.class)
 public class RequestControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @MockBean
-    ItemRequestServiceImpl itemRequestService;
+    private ItemRequestServiceImpl itemRequestService;
 
     @Autowired
     private MockMvc mvc;

@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.notNullValue;
 @DataJpaTest
 public class UserRepositoryTest {
 
-    User user = new User(null, "User111", "user111@mail.ru");
+    private User user = new User(null, "User111", "user111@mail.ru");
     @Autowired
     private UserRepository userRepository;
 
