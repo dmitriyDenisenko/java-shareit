@@ -28,6 +28,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,7 +53,7 @@ public class BookingServiceImpl implements BookingService {
         if (!(item.getAvailable())) {
             throw new ItemNotAvailableException("item not availible");
         }
-        if (item.getOwner() == userId) {
+        if (Objects.equals(item.getOwner(), userId)) {
             throw new UserIsNotOwnerException("you can not booking this item");
         }
         if (bookingDto.getStart().isAfter(bookingDto.getEnd())) {
@@ -74,7 +75,7 @@ public class BookingServiceImpl implements BookingService {
         if (!(booking.getStatus().equals(Status.WAITING))) {
             throw new BookingNotChangeStatusException("status can not be change");
         }
-        if (userId != booking.getItem().getOwner()) {
+        if (!Objects.equals(userId, booking.getItem().getOwner())) {
             throw new UserIsNotOwnerException("user not owner this item and can not approve status");
         }
         if (approved) {
@@ -89,7 +90,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoUser getBookingById(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("booking not found"));
-        if (userId != booking.getItem().getOwner() && userId != booking.getBooker().getId()) {
+        if (!Objects.equals(userId, booking.getItem().getOwner()) && !Objects.equals(userId, booking.getBooker().getId())) {
             throw new UserIsNotOwnerException("user not owner this item and can not get this booking");
         }
         return BookingMapper.toBookingDtoToUser(booking);
