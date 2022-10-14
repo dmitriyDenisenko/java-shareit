@@ -22,10 +22,10 @@ import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.UserIsNotOwnerException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.request.exception.BadParametersException;
 import ru.practicum.shareit.user.exception.UserNotExistsException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.validator.ValidatorParameters;
 
 import java.util.Comparator;
 import java.util.List;
@@ -87,7 +87,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoState> getBookingCurrentUser(Long userId, State stateEnum, Integer from, Integer size) {
-        validatePageParameters(from, size);
+        ValidatorParameters.validatePageParameters(from, size);
         User booker = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
         return bookingRepository.findAllByBooker(booker, PageRequest.of(from / size, size,
                         Sort.by(Sort.Direction.DESC, "start")))
@@ -100,7 +100,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoState> getBookingCurrentOwner(Long userId, State stateEnum, Integer from, Integer size) {
-        validatePageParameters(from, size);
+        ValidatorParameters.validatePageParameters(from, size);
         User owner = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
         return bookingRepository.findAllByItemOwner(owner.getId(), PageRequest.of(from / size, size,
                         Sort.by(Sort.Direction.DESC, "start")))
@@ -149,10 +149,4 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private void validatePageParameters(Integer from, Integer size) {
-        if (from < 0 || size == 0) {
-            log.warn("From = {}; Size = {}", from, size);
-            throw new BadParametersException("Error! You giving bad Parameters");
-        }
-    }
 }
