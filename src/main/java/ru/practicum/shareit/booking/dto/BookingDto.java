@@ -22,9 +22,9 @@ public class BookingDto {
     @Future
     private LocalDateTime end;
 
-    private long itemId;
+    private Long itemId;
 
-    private long booker;
+    private Long booker;
 
     private Status status;
 }

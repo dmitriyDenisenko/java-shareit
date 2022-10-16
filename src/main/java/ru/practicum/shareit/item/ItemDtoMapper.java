@@ -16,7 +16,7 @@ public class ItemDtoMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
-                .request(item.getRequest())
+                .requestId(item.getRequestId() != null ? item.getRequestId() : null)
                 .build();
     }
 
@@ -34,7 +34,6 @@ public class ItemDtoMapper {
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
-                .request(itemDto.getRequest())
                 .build();
     }
 }

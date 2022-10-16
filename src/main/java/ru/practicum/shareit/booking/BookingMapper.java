@@ -9,6 +9,8 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingForItem;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
+import ru.practicum.shareit.item.ItemDtoMapper;
+import ru.practicum.shareit.user.UserDtoMapper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -60,8 +62,8 @@ public class BookingMapper {
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .item(booking.getItem())
-                .booker(booking.getBooker())
+                .item(ItemDtoMapper.mapToItemDto(booking.getItem()))
+                .booker(UserDtoMapper.mapToUserDto(booking.getBooker()))
                 .status(booking.getStatus())
                 .states(states)
                 .build();
@@ -72,8 +74,8 @@ public class BookingMapper {
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .item(booking.getItem())
-                .booker(booking.getBooker())
+                .item(ItemDtoMapper.mapToItemDto(booking.getItem()))
+                .booker(UserDtoMapper.mapToUserDto(booking.getBooker()))
                 .status(booking.getStatus())
                 .build();
     }
