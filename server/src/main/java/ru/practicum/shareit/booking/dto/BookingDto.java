@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.Status;
 
-import javax.validation.constraints.Future;
 import java.time.LocalDateTime;
 
 @Data

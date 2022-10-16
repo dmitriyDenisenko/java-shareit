@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
 import java.time.LocalDateTime;
 
 @Data
@@ -23,11 +22,9 @@ public class Booking {
     private Long id;
 
     @Column(name = "start_time", nullable = false)
-    @Future
     private LocalDateTime start;
 
     @Column(name = "end_time", nullable = false)
-    @Future
     private LocalDateTime end;
 
     @ManyToOne

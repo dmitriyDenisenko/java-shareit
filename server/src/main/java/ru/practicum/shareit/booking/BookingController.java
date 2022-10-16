@@ -14,8 +14,7 @@ import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
+
 import java.util.List;
 
 @RestController
@@ -62,7 +61,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    List<BookingDtoState> getBookingCurrentOwner(@NotBlank @RequestHeader("X-Sharer-User-Id") Long userId,
+    List<BookingDtoState> getBookingCurrentOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                  @RequestParam(defaultValue = "ALL") String state,
                                                  @RequestParam(defaultValue = "1") Integer from,
                                                  @RequestParam(defaultValue = "10") Integer size) {

@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,7 +14,6 @@ import java.time.LocalDateTime;
 public class RequestDto {
     private Long id;
 
-    @NotEmpty
     private String description;
 
     private Long requesterId;

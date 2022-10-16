@@ -9,8 +9,6 @@ import ru.practicum.shareit.user.exception.UserNotExistsException;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
-import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -55,12 +53,6 @@ public class UserController {
         userService.removeUser(userId);
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, Integer> handleValidation(final ConstraintViolationException e) {
-        log.warn("The action was not completed successfully");
-        return Map.of("Validation error: ", 404);
-    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
