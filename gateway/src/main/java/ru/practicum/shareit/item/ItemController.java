@@ -18,7 +18,7 @@ public class ItemController {
     private final ItemClient itemClient;
 
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<Object> create(@RequestHeader("X-Sharer-User-Id") long userId,
                                          @Valid @RequestBody ItemDto itemDto) {
         log.info("create item{}", itemDto);
@@ -40,7 +40,7 @@ public class ItemController {
         return itemClient.getItemById(userId, itemId);
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<Object> getAllItemsByUser(@RequestHeader("X-Sharer-User-Id") long userId,
                                                     @Valid @RequestParam(name = "from", defaultValue = "1") int from,
                                                     @RequestParam(name = "size", defaultValue = "10") int size) {
