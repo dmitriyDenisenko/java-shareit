@@ -36,4 +36,4 @@ services:
     environment:
       - POSTGRES_DB=shareit
       - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=root
+      - POSTGRES_PASSWORD=qwerty
