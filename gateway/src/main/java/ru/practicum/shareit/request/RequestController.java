@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -10,14 +11,11 @@ import javax.validation.Valid;
 
 @Controller
 @RequestMapping(path = "/requests")
+@RequiredArgsConstructor
 @Slf4j
 @Validated
 public class RequestController {
     private final RequestClient requestClient;
-
-    public RequestController(RequestClient requestClient) {
-        this.requestClient = requestClient;
-    }
 
     @PostMapping()
     public ResponseEntity<Object> create(@RequestHeader("X-Sharer-User-Id") long userId,

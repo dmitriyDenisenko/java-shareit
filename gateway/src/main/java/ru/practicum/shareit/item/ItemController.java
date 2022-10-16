@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,19 +12,16 @@ import javax.validation.Valid;
 
 @Controller
 @RequestMapping(path = "/items")
+@RequiredArgsConstructor
 @Slf4j
 @Validated
 public class ItemController {
     private final ItemClient itemClient;
 
-    @Autowired
-    public ItemController(ItemClient itemClient) {
-        this.itemClient = itemClient;
-    }
 
     @PostMapping()
     public ResponseEntity<Object> create(@RequestHeader("X-Sharer-User-Id") long userId,
-                                         @Valid @RequestBody ItemDto itemDto) {
+                                         @Valid @RequestBody  ItemDto itemDto) {
         log.info("create item{}", itemDto);
         return itemClient.create(userId, itemDto);
     }
