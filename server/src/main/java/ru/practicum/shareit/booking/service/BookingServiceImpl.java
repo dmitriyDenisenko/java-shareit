@@ -24,7 +24,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.exception.UserNotExistsException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.validator.ValidatorParameters;
 
 import java.util.Comparator;
 import java.util.List;
@@ -86,7 +85,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoState> getBookingCurrentUser(Long userId, State stateEnum, Integer from, Integer size) {
-        ValidatorParameters.validatePageParameters(from, size);
         User booker = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
         return bookingRepository.findAllByBooker(booker, PageRequest.of(from / size, size,
                         Sort.by(Sort.Direction.DESC, "start")))
@@ -99,7 +97,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoState> getBookingCurrentOwner(Long userId, State stateEnum, Integer from, Integer size) {
-        ValidatorParameters.validatePageParameters(from, size);
         User owner = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
         return bookingRepository.findAllByItemOwner(owner.getId(), PageRequest.of(from / size, size,
                         Sort.by(Sort.Direction.DESC, "start")))

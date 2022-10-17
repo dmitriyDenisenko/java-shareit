@@ -52,7 +52,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> getAll(Long sharerUserId, Integer from, Integer size) {
-        validatePageParameters(from, size);
         User user = checkAndGenerateUser(sharerUserId);
         log.info("All successful for getAll");
         return itemRequestRepository.findAllByRequesterIsNot(user.getId(), PageRequest
@@ -95,9 +94,4 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return ItemRequestMapper.mapToItemRequestDto(itemRequest, items);
     }
 
-    private void validatePageParameters(Integer from, Integer size) {
-        if (from < 0 || size == 0) {
-            throw new BadParametersException("Error! You giving bad Parameters");
-        }
-    }
 }

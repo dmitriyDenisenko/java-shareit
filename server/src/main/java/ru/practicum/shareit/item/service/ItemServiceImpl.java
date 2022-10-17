@@ -25,7 +25,6 @@ import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.exception.UserNotExistsException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.validator.ValidatorParameters;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -104,7 +103,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getAllItemsForUser(Integer from, Integer size, Long userId) {
-        ValidatorParameters.validatePageParameters(from, size);
         User owner = userRepository.findById(userId).orElseThrow(UserNotExistsException::new);
         log.info("All successful for get all Items for user {}", userId);
         return itemRepository.findByOwner(owner.getId(), PageRequest.of(from / size, size))
@@ -117,7 +115,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> searchItemByText(Integer from, Integer size, String text) {
-        ValidatorParameters.validatePageParameters(from, size);
         if ("".equals(text)) {
             return new ArrayList<>();
         }
