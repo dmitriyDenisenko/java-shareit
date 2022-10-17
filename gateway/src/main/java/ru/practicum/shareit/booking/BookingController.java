@@ -10,6 +10,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
+import ru.practicum.shareit.booking.exception.BookingDtoBadStateException;
+import ru.practicum.shareit.booking.exception.ErrorResponse;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -79,5 +81,12 @@ public class BookingController {
         Map<String, String> resp = new HashMap<>();
         resp.put("error", String.format("Unknown state: UNSUPPORTED_STATUS"));
         return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIncorrectParameterException(TimeStartAndEndException e) {
+        log.warn("The action was not completed successfully");
+        return new ErrorResponse("Unknown state: UNSUPPORTED_STATUS");
     }
 }
