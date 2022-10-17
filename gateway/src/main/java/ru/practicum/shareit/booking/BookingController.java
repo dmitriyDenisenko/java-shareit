@@ -85,8 +85,10 @@ public class BookingController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIncorrectParameterException(TimeStartAndEndException e) {
+    public ResponseEntity<Map<String, String>> handleIncorrectParameterException(TimeStartAndEndException e) {
         log.warn("The action was not completed successfully");
-        return new ErrorResponse("Unknown state: UNSUPPORTED_STATUS");
+        Map<String, String> resp = new HashMap<>();
+        resp.put("error", String.format("Unknown state: TimeStartAndEndException"));
+        return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
     }
 }
