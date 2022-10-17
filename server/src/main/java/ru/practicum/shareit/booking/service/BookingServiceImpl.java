@@ -121,11 +121,6 @@ public class BookingServiceImpl implements BookingService {
                     item.getId(), item.getOwner(), userId);
             throw new UserIsNotOwnerException("you can not booking this item");
         }
-        if (bookingDto.getStart().isAfter(bookingDto.getEnd())) {
-            log.warn("Booking start: {}, after booking end: {}",
-                    bookingDto.getStart(), bookingDto.getEnd());
-            throw new TimeStartAndEndException();
-        }
     }
 
     private void validateApproveStatus(Booking booking, Long userId) {
