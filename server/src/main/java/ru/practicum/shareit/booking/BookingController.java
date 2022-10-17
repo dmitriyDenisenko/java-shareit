@@ -70,7 +70,7 @@ public class BookingController {
     }
 
     @ExceptionHandler(value
-            = {BookingDtoBadStateException.class, TimeStartAndEndException.class})
+            = {BookingDtoBadStateException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(RuntimeException e) {
         log.warn("The action was not completed successfully");
