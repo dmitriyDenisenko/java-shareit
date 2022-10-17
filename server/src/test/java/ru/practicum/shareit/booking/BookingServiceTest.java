@@ -16,7 +16,6 @@ import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.item.exception.ItemNotAvailableException;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.UserIsNotOwnerException;
-import ru.practicum.shareit.request.exception.BadParametersException;
 import ru.practicum.shareit.user.exception.UserNotExistsException;
 
 import java.util.ArrayList;
