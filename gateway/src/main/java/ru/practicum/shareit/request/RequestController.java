@@ -37,7 +37,7 @@ public class RequestController {
     public ResponseEntity<Object> getAll(@RequestHeader("X-Sharer-User-Id") long userId,
                                          @Valid @RequestParam(name = "from", defaultValue = "1") int from,
                                          @RequestParam(name = "size", defaultValue = "10") int size) {
-        if(from < 0){
+        if (from < 0) {
             throw new IllegalArgumentException();
         }
         log.info("get requests all");
