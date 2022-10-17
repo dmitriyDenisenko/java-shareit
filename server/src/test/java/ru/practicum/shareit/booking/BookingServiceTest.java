@@ -137,12 +137,6 @@ public class BookingServiceTest {
     }
 
     @Test
-    void testGetBookingCurrentUserWrongFrom() {
-        assertThrows(BadParametersException.class, () -> bookingService
-                .getBookingCurrentUser(2L, State.PAST, -1, 10));
-    }
-
-    @Test
     void testGetBookingCurrentOwner() {
         List<BookingDtoState> bookings = bookingService.getBookingCurrentOwner(1L, State.PAST, 0, 10);
         assertThat(bookings.size(), equalTo(List.of(bookingDtoState).size()));
@@ -152,13 +146,6 @@ public class BookingServiceTest {
     void testGetBookingWrongCurrentOwner() {
         assertThrows(UserNotExistsException.class, () -> bookingService
                 .getBookingCurrentOwner(100L, State.PAST, 0, 10));
-
-    }
-
-    @Test
-    void testGetBookingCurrentOwnerWrongFrom() {
-        assertThrows(BadParametersException.class, () ->
-                bookingService.getBookingCurrentOwner(1L, State.PAST, -1, 10));
 
     }
 }

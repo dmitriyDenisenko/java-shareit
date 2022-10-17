@@ -43,7 +43,7 @@ public class ItemServiceTest {
     @DirtiesContext
     void testCreateWithItemRequest() {
         itemDtoCreated.setRequestId(1L);
-        long itemId = itemService.saveItem(itemDtoCreated,1L).getId();
+        long itemId = itemService.saveItem(itemDtoCreated, 1L).getId();
         ItemDto itemDtoFromSQL = itemService.getItemById(1L, itemId);
         assertThat(itemDtoFromSQL, equalTo(itemDtoCreated));
         itemDtoCreated.setRequestId(null);
@@ -60,7 +60,7 @@ public class ItemServiceTest {
     @DirtiesContext
     void testUpdate() {
         itemDto1.setName("new name");
-        itemService.updateItem(itemDto1,1L, 1L);
+        itemService.updateItem(itemDto1, 1L, 1L);
         ItemDto itemDtoFromSQL = itemService.getItemById(1L, 1L);
         assertThat(itemDtoFromSQL.getName(), equalTo(itemDto1.getName()));
         itemDto1.setName("item1");
@@ -111,7 +111,7 @@ public class ItemServiceTest {
     void testUpdateWrongOwner() {
         itemService.saveItem(itemDto1, 1L);
         itemDto1.setName("new name");
-        assertThrows(ItemsDifficileUsersException.class, () -> itemService.updateItem(itemDto1,1L,
+        assertThrows(ItemsDifficileUsersException.class, () -> itemService.updateItem(itemDto1, 1L,
                 10L));
         itemDto1.setName("item1");
     }
@@ -141,19 +141,8 @@ public class ItemServiceTest {
     }
 
     @Test
-    void testGetAllItemsByWrongFrom() {
-        assertThrows(BadParametersException.class, () -> itemService.getAllItemsForUser(-1, 10, 2L));
-    }
-
-    @Test
     void testGetAllItemsByWrongUser() {
         assertThrows(UserNotExistsException.class, () -> itemService.getAllItemsForUser(1, 10, 20L));
-    }
-
-
-    @Test
-    void testGetAllItemsWrongFrom() {
-        assertThrows(BadParametersException.class, () -> itemService.searchItemByText(-1, 10, "item1"));
     }
 
     @Test
@@ -163,12 +152,6 @@ public class ItemServiceTest {
         assertThat(items, equalTo(List.of(itemDto1)));
         itemDto1.setComments(new ArrayList<>());
     }
-
-    @Test
-    void testSearchWrongFrom() {
-        assertThrows(BadParametersException.class, () -> itemService.searchItemByText(-1, 10, "item1"));
-    }
-
 
     @Test
     void testSearchEmpty() {

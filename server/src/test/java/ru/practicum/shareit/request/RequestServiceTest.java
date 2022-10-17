@@ -64,10 +64,4 @@ public class RequestServiceTest {
         assertThrows(UserNotExistsException.class, () -> itemRequestService.checkAndGenerateUser(200L));
 
     }
-
-
-    @Test
-    void testGetAllWrongFrom() {
-        assertThrows(BadParametersException.class, () -> itemRequestService.getAll(1L, -1, 10));
-    }
 }
