@@ -12,7 +12,6 @@ import ru.practicum.shareit.booking.dto.BookingDtoState;
 import ru.practicum.shareit.booking.dto.BookingDtoUser;
 import ru.practicum.shareit.booking.exception.BookingNotChangeStatusException;
 import ru.practicum.shareit.booking.exception.BookingNotFoundException;
-import ru.practicum.shareit.booking.exception.TimeStartAndEndException;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
