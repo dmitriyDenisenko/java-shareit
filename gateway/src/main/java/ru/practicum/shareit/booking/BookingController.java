@@ -50,11 +50,7 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<Object> bookItem(@RequestHeader("X-Sharer-User-Id") long userId,
                                            @RequestBody @Valid BookItemRequestDto requestDto) {
-        if (requestDto.getStart().isAfter(requestDto.getEnd())) {
-            log.warn("Booking start: {}, after booking end: {}",
-                    requestDto.getStart(), requestDto.getEnd());
-            throw new TimeStartAndEndException();
-        }
+        validateBookingTime(requestDto);
         log.info("Creating booking {}, userId={}", requestDto, userId);
         return bookingClient.bookItem(userId, requestDto);
     }
@@ -84,9 +80,17 @@ public class BookingController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleIncorrectParameterException(TimeStartAndEndException e) {
-        log.warn("The action was not completed successfully");
+        log.warn(e.getMessage());
         Map<String, String> resp = new HashMap<>();
         resp.put("error", String.format("Unknown state: TimeStartAndEndException"));
         return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+    }
+
+    private void validateBookingTime(BookItemRequestDto requestDto) {
+        if (requestDto.getStart().isAfter(requestDto.getEnd())) {
+            log.warn("Booking start: {}, after booking end: {}",
+                    requestDto.getStart(), requestDto.getEnd());
+            throw new TimeStartAndEndException();
+        }
     }
 }

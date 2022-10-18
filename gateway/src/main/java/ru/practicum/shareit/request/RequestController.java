@@ -37,9 +37,7 @@ public class RequestController {
     public ResponseEntity<Object> getAll(@RequestHeader("X-Sharer-User-Id") long userId,
                                          @Valid @RequestParam(name = "from", defaultValue = "1") int from,
                                          @RequestParam(name = "size", defaultValue = "10") int size) {
-        if (from < 0) {
-            throw new IllegalArgumentException();
-        }
+        validateParameter(from);
         log.info("get requests all");
         return requestClient.getAll(userId, from, size);
     }
@@ -57,5 +55,11 @@ public class RequestController {
         Map<String, String> resp = new HashMap<>();
         resp.put("error", String.format("Unknown state: UNSUPPORTED_STATUS"));
         return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+    }
+
+    private void validateParameter(Integer from) {
+        if (from < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 }
